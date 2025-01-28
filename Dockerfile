@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY server.py .
 COPY update_vimrc.sh .
+COPY config.py .
 
 LABEL "traefik.enable"="true"
 LABEL "traefik.http.routers.vim_updater.rule"="Host(`vim.kuipr.de`)"
