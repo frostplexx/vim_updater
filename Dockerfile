@@ -6,12 +6,10 @@ COPY server.py .
 COPY update_vimrc.sh .
 
 LABEL "traefik.enable"="true"
-LABEL "traefik.port"="8080"
 LABEL "traefik.http.routers.vim_updater.rule"="Host(`vim.kuipr.de`)"
 LABEL "traefik.http.routers.vim_updater.entrypoints"="websecure"
 LABEL "traefik.http.routers.vim_updater.tls.certresolver"="myresolver"
 LABEL "traefik.http.services.vim_updater.loadbalancer.server.port"="8080"
-LABEL "traefik.docker.network"="proxy"
 
 EXPOSE 8080
 
