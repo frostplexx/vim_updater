@@ -1,42 +1,46 @@
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
-from pyftpdlib.handlers import FTPHandler
-from pyftpdlib.servers import FTPServer
-from pyftpdlib.authorizers import DummyAuthorizer
-import threading
+from urllib.request import urlopen
+from urllib.error import URLError
+from config import VIMRC_URL
 
 PORT = int(os.environ.get('PORT', 8080))
-FTP_PORT = int(os.environ.get('FTP_PORT', 2121))
 
 class VimrcHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
+            with open('update_vimrc.sh', 'r') as file:
+                script_content = file.read()
+            
+            # Replace the URL placeholder with the actual URL from config
+            script_content = script_content.replace(
+                'VIMRC_URL="PLACEHOLDER"',
+                f'VIMRC_URL="{VIMRC_URL}"'
+            )
+            
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-            with open('update_vimrc.sh', 'rb') as file:
-                self.wfile.write(file.read())
+            self.wfile.write(script_content.encode('utf-8'))
+        elif self.path == '/vimrc':
+            try:
+                with urlopen(VIMRC_URL) as response:
+                    vimrc_content = response.read()
+                
+                self.send_response(200)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(vimrc_content)
+            except URLError as e:
+                self.send_error(500, f"Failed to fetch vimrc: {str(e)}")
         else:
             self.send_error(404)
 
-def start_ftp_server():
-    authorizer = DummyAuthorizer()
-    authorizer.add_anonymous(os.getcwd(), perm='elradfmw')
-    
-    handler = FTPHandler
-    handler.authorizer = authorizer
-    
-    server = FTPServer(('', FTP_PORT), handler)
-    print(f"FTP server started at port {FTP_PORT}")
-    server.serve_forever()
+def run_server():
+    server_address = ('', PORT)
+    httpd = HTTPServer(server_address, VimrcHandler)
+    print(f'Starting HTTP server on port {PORT}...')
+    httpd.serve_forever()
 
 if __name__ == '__main__':
-    # Start FTP server in a separate thread
-    ftp_thread = threading.Thread(target=start_ftp_server)
-    ftp_thread.daemon = True
-    ftp_thread.start()
-    
-    # Start HTTP server
-    with HTTPServer(("", PORT), VimrcHandler) as httpd:
-        print(f"HTTP server serving at port {PORT}")
-        httpd.serve_forever()
+    run_server()

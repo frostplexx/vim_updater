@@ -1,0 +1,1 @@
+VIMRC_URL = "https://raw.githubusercontent.com/frostplexx/dotfiles.nix/refs/heads/main/home/programs/editor/vimrc" 

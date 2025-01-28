@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # URL of the vimrc file
-VIMRC_URL="https://raw.githubusercontent.com/frostplexx/dotfiles/refs/heads/main/shared/.vimrc"
+VIMRC_URL="PLACEHOLDER"
 
 # Path to user's .vimrc
 USER_VIMRC="$HOME/.vimrc"
