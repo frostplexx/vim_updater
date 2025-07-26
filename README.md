@@ -1,3 +1,3 @@
 - Direct access to vimrc file: https://vim.kuipr.de/vimrc
 - Installer bash script: https://vim.kuipr.de
-- Source of the vim script: https://github.com/frostplexx/dotfiles.nix/blob/main/home/programs/editor/vimrc
+- Source of the vim script: https://github.com/frostplexx/dotfiles.nix/blob/main/home/neovim/vimrc
